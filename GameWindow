@@ -1,0 +1,6 @@
+WIDTH = 600
+HEIGHT = 700
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Space Invaders - Requirement 2")
+
+clock = pygame.time.Clock()
