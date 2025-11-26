@@ -19,4 +19,5 @@ for bullet in alien_bullets[:]:
         pygame.display.update()
         pygame.time.wait(2000)
         pygame.quit()
+
         sys.exit()
