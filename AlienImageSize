@@ -1,0 +1,4 @@
+alien_images = [
+    pygame.transform.scale(img, (40, 30))
+    for img in alien_images
+]
