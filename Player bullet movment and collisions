@@ -1,0 +1,13 @@
+for bullet in player_bullets[:]:
+        bullet.y += bullet_speed
+
+        # remove off-screen
+        if bullet.y < 0:
+            player_bullets.remove(bullet)
+
+        # collide with aliens
+        for alien in aliens[:]:
+            if bullet.colliderect(alien["rect"]):
+                aliens.remove(alien)
+                player_bullets.remove(bullet)
+                break
