@@ -1,0 +1,8 @@
+player_img = pygame.image.load("defender.png")
+player_img = pygame.transform.scale(player_img, (50, 30))
+
+alien_images = [
+    pygame.image.load("invader1.png"),
+    pygame.image.load("invader2.png"),
+    pygame.image.load("invader3.png")
+]
