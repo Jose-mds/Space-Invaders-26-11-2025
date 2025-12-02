@@ -1,23 +1,23 @@
-# alien.py
+# invader.py
 import pygame
 import random
 from bullet import Bullet
 
-alienColors = {1:(50,150,255), 2:(50,255,50), 3:(255,50,50)}
+invaderColors = {1:(50,150,255), 2:(50,255,50), 3:(255,50,50)}
 
-ALIENWIDTH = 40
-ALIENHEIGHT = 30
+INVADERWIDTH = 40
+INVADERHEIGHT = 30
 
-class Alien:
+class Invader:
     def __init__(self, posx, posy, typeAlien):
         self.x = posx
         self.y = posy
-        self.typeAlien = typeAlien
+        self.typeInvader = typeInvader
         self.alive = True
-        self.rect = pygame.Rect(self.x, self.y, ALIENWIDTH, ALIENHEIGHT)
+        self.rect = pygame.Rect(self.x, self.y, INVADERWIDTH, INVADERHEIGHT)
         self.nextShot = random.uniform(0.5,3.0)
 
-    def moveAlien(self, dx, dy):
+    def moveInvader(self, dx, dy):
         self.rect.x += dx
         self.rect.y += dy
 
@@ -30,8 +30,8 @@ class Alien:
                 bulletsList.append(b)
             self.nextShot = random.uniform(0.5,3.0)
 
-    def drawAlien(self, screen):
-        pygame.draw.rect(screen, alienColors[self.typeAlien], self.rect)
+    def drawInvader(self, screen):
+        pygame.draw.rect(screen,InvaderColors[self.typeInvader], self.rect)
         font = pygame.font.SysFont(None,16)
-        img = font.render(str(self.typeAlien),True,(0,0,0))
+        img = font.render(str(self.typeInvader),True,(0,0,0))
         screen.blit(img, (self.rect.x+10,self.rect.y+5))
