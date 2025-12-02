@@ -1,40 +1,40 @@
 import pygame
 
 class Block(pygame.sprite.Sprite):
-    def __init__(self, size, color, x, y):
+    def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.Surface((size, size))
-        self.image.fill(color)
+        self.image = pygame.Surface((8, 8))   
+        self.image.fill((255, 0, 0))        
         self.rect = self.image.get_rect(topleft=(x, y))
 
-class BarrierShape:
-    def __init__(self, shape, block_size = 8, color = (0, 200, 0)):
-        self.shape = shape
-        self.block_size = block_size
-        self.color = color
 
-    def create_barrier(self, x_offset = 0, y_offset = 0):
-        group = pygame.sprite.Group()
-
-        for row_index, row in enumerate(self.shape):
-            for col_index, char in enumerate(row):
-                if char == "x":
-                    x = x_offset + col_index * self.block_size
-                    y = y_offset + row_index * self.block_size
-
-                    block = Block(self.block_size, self.color, x, y)
-                    group.add(block)
-
-        return group
 
 shape = [
-    "  xxxxxxx",
-    " xxxxxxxxx",
-    "xxxxxxxxxxx",
-    "xxxxxxxxxxx",
-    "xxxxxxxxxxx",
-    "xxx     xxx",
-    "xx       xx"
+"  xxxxxxx",
+" xxxxxxxxx",
+"xxxxxxxxxxx",
+"xxxxxxxxxxx",
+"xxxxxxxxxxx",
+"xxx     xxx",
+"xx       xx"
 ]
 
-barrier = BarrierShape(shape)
+
+
+def make_barriers():
+    barriers = pygame.sprite.Group()
+
+ 
+    barrier_x_positions = [60, 260, 460, 660]
+    barrier_y = 450  
+
+    for bx in barrier_x_positions:
+        for row_index, row in enumerate(shape):
+            for col_index, char in enumerate(row):
+                if char == "x":
+                    x = bx + col_index * 8
+                    y = barrier_y + row_index * 8
+                    block = Block(x, y)
+                    barriers.add(block)
+
+    return barriers
