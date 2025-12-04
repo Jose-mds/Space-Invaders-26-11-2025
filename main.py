@@ -12,6 +12,17 @@ pygame.display.set_caption("Space Invaders")
 
 clock = pygame.time.Clock()
 
+#sounds
+laser_sound = pygame.mixer.Sound("sounds/laser.wav")
+laser_sound.set_volume(0.3)
+hit_sound = pygame.mixer.Sound("sounds/hit.mp3")
+hit_sound.set_volume(0.3)
+pygame.mixer.music.load("sounds/bgmusic.mp3")
+pygame.mixer.music.set_volume(0.1)
+pygame.mixer.music.play(-1)
+game_over_sound = pygame.mixer.Sound("sounds/gameover.mp3")
+game_over_sound.set_volume(0.2)
+
 #PLAYER
 player_img = pygame.image.load("images/defender.png")
 player_img = pygame.transform.scale(player_img, (50, 30))
@@ -56,6 +67,44 @@ alien_bullet_speed = 5
 barriers = make_barriers()
 
 
+def draw_button(text, x, y, w, h):
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+
+    # Button colour change on hover
+    if x < mouse[0] < x+w and y < mouse[1] < y+h:
+        colour = (180, 180, 180)
+        if click[0] == 1:
+            return True   # button clicked
+    else:
+        colour = (120, 120, 120)
+
+    pygame.draw.rect(screen, colour, (x, y, w, h))
+    label = font.render(text, True, (0, 0, 0))
+    screen.blit(label, (x + (w - label.get_width()) // 2,
+                        y + (h - label.get_height()) // 2))
+    return False
+
+def reset_game():
+    global player_x, player_y, lives, respawn_cooldown
+    global player_bullets, alien_bullets, aliens
+
+    player_x = WIDTH // 2
+    player_y = HEIGHT - 80
+    lives = 3
+    respawn_cooldown = 0
+    player_bullets = []
+    alien_bullets = []
+    barriers = make_barriers()
+
+    # recreate aliens
+    aliens = []
+    for x in range(6):
+        for y in range(3):
+            img = alien_images[y % 3]
+            rect = img.get_rect(topleft=(80 + x * 70, 80 + y * 60))
+            aliens.append({"rect": rect, "img": img})
+
 #TEXT
 font = pygame.font.SysFont(None, 32)
 def text(txt, x, y):
@@ -77,6 +126,7 @@ while running:
             if event.key == pygame.K_SPACE and respawn == 0:
                 bullet = pygame.Rect(player_x + 23, player_y, 4, 12)
                 player_bullets.append(bullet)
+                laser_sound.play()
 
     #PLAYER MOVEMENT
     keys = pygame.key.get_pressed()
@@ -98,7 +148,9 @@ while running:
             if bullet.colliderect(alien["rect"]):
                 player_bullets.remove(bullet)
                 aliens.remove(alien)
+                hit_sound.play()
                 break
+                
 
         # hit barrier
         for block in barriers:
@@ -143,6 +195,7 @@ while running:
         if random.randint(1, 150) == 1:
             rect = alien["rect"]
             alien_bullets.append(pygame.Rect(rect.x + 20, rect.y + 30, 4, 12))
+            laser_sound.play()
 
     #ALIEN BULLETS COLLISIONS
     for bullet in alien_bullets[:]:
@@ -166,17 +219,36 @@ while running:
                 lives -= 1
                 respawn = 60
                 alien_bullets.remove(bullet)
+                hit_sound.play()
 
     if respawn > 0:
         respawn -= 1
 
     #GAME OVER
     if lives <= 0:
-        text("GAME OVER", WIDTH//2 - 80, HEIGHT//2)
+        screen.fill((0, 0, 0))
+        text("GAME OVER", WIDTH//2 - 90, HEIGHT//2 - 40)
+        game_over_sound.play()
+
+        if draw_button("TRY AGAIN", WIDTH//2 - 100, HEIGHT//2 + 20, 200, 50):
+            reset_game()
+            barriers = make_barriers()
+
         pygame.display.update()
-        pygame.time.wait(2000)
-        pygame.quit()
-        sys.exit()
+        continue
+
+    #WIN
+    if len(aliens) == 0:
+        screen.fill((0, 0, 0))
+        text("YOU WIN!", WIDTH//2 - 70, HEIGHT//2 - 40)
+        game_over_sound.play()
+
+        if draw_button("PLAY AGAIN", WIDTH//2 - 100, HEIGHT//2 + 20, 200, 50):
+            reset_game()
+            barriers = make_barriers()
+
+        pygame.display.update()
+        continue
 
     #DRAW
     if respawn % 10 < 5:
@@ -192,6 +264,7 @@ while running:
         pygame.draw.rect(screen, (255, 255, 0), bullet)
 
     barriers.draw(screen)
+    
 
     text(f"Lives: {lives}", 10, 10)
 
